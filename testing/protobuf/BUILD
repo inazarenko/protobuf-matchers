@@ -16,6 +16,18 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_proto_library", "cc_test")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
+cc_library(
+    name = "matchers",
+    hdrs = ["protocol-buffer-matchers.h"],
+    srcs = ["protocol-buffer-matchers.cc"],
+    testonly = 1,
+    deps = [
+        "@com_google_googletest//:gtest",
+        "@com_google_protobuf//:protobuf",
+        "@com_google_absl//absl/strings",
+    ]
+)
+
 proto_library(
     name = "deleteme_proto",
     srcs = ["deleteme.proto"],

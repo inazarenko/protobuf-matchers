@@ -12,6 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * This file was originally released under the above license as a part
+ * of Google Nucleus project at:
+ *
+ *      https://github.com/google/nucleus
+ *
+ * It was modified to move the matchers to a different namespace and
+ * remove dependencies on Tensorflow and Nucleus.
+ *
+ * Modifications copyright 2020 Igor Nazarenko.
  */
 
 // gMock matchers used to validate protocol buffer arguments.
@@ -190,9 +200,9 @@
 #include <string>  // NOLINT
 #include <vector>  // NOLINT
 
-#include <gmock/gmock-generated-matchers.h>
-#include <gmock/gmock-matchers.h>
-#include <gmock/gmock-more-matchers.h>
+// #include "gmock/gmock-generated-matchers.h"
+#include "gmock/gmock-matchers.h"
+#include "gmock/gmock-more-matchers.h"
 
 
 #include "google/protobuf/io/zero_copy_stream.h"
@@ -204,9 +214,6 @@
 #include "google/protobuf/util/field_comparator.h"
 #include "google/protobuf/util/message_differencer.h"
 #include "absl/strings/string_view.h"
-
-#include "tensorflow/core/platform/logging.h"
-#include "nucleus/platform/types.h"
 
 namespace nucleus {
 

@@ -12,12 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * This file was originally released under the above license as a part
+ * of Google Nucleus project at:
+ *
+ *      https://github.com/google/nucleus
+ *
+ * It was modified to move the matchers to a different namespace and
+ * remove dependencies on Tensorflow and Nucleus.
+ *
+ * Modifications copyright 2020 Igor Nazarenko.
  */
 
 #include <algorithm>
 #include <string>
 
-#include "nucleus/testing/protocol-buffer-matchers.h"
+#include "testing/protobuf/protocol-buffer-matchers.h"
 
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
@@ -28,13 +38,9 @@
 #include "google/protobuf/text_format.h"
 #include "google/protobuf/util/message_differencer.h"
 
-#include <gmock/gmock-generated-matchers.h>
-#include <gmock/gmock-matchers.h>
-#include <gmock/gmock-more-matchers.h>
-
-#include "tensorflow/core/platform/test.h"
-
-#include "re2/re2.h"
+// #include "gmock/gmock-generated-matchers.h"
+#include "gmock/gmock-matchers.h"
+#include "gmock/gmock-more-matchers.h"
 
 namespace nucleus {
 namespace internal {
