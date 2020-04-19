@@ -16,27 +16,27 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
-  name = "com_google_absl",
-  urls = ["https://github.com/abseil/abseil-cpp/archive/master.zip"],
-  strip_prefix = "abseil-cpp-master",
+    name = "com_google_absl",
+    strip_prefix = "abseil-cpp-master",
+    urls = ["https://github.com/abseil/abseil-cpp/archive/master.zip"],
 )
 
 http_archive(
     name = "com_google_googletest",
-    url = "https://github.com/google/googletest/archive/master.zip",
     strip_prefix = "googletest-master",
+    url = "https://github.com/google/googletest/archive/master.zip",
 )
 
 http_archive(
-     name = "com_google_re2",
-     urls = ["https://github.com/google/re2/archive/master.zip"],
-     strip_prefix = "re2-master",
+    name = "com_google_re2",
+    strip_prefix = "re2-master",
+    urls = ["https://github.com/google/re2/archive/master.zip"],
 )
 
 http_archive(
-     name = "com_google_protobuf",
-     urls = ["https://github.com/protocolbuffers/protobuf/archive/master.zip"],
-     strip_prefix = "protobuf-master",
+    name = "com_google_protobuf",
+    strip_prefix = "protobuf-master",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/master.zip"],
 )
 
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
