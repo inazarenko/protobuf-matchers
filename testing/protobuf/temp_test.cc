@@ -1,9 +1,16 @@
 
-#include "testing/protobuf/deleteme.pb.h"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "testing/protobuf/deleteme.pb.h"
 
 namespace {
-  TEST(MyTest, Basic) {
-      EXPECT_EQ(0, 2);
-  }
+
+using ::testing::HasSubstr;
+
+TEST(MyTest, Basic) {
+  ::deleteme::Mess m;
+  m.set_id(42);
+  EXPECT_THAT(m.DebugString(), HasSubstr("id: 42"));
 }
+
+}  // namespace

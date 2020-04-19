@@ -2,6 +2,6 @@ syntax = "proto3";
 package deleteme;
 
 message Mess {
-    string name = 1;
-    int32 id = 2;
+  string name = 1;
+  int32 id = 2;
 }
