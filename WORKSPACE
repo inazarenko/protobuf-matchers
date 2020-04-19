@@ -17,23 +17,26 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
   name = "com_google_absl",
-  urls = ["https://github.com/abseil/abseil-cpp/archive/c512f118dde6ffd51cb7d8ac8804bbaf4d266c3a.zip"],
-  strip_prefix = "abseil-cpp-c512f118dde6ffd51cb7d8ac8804bbaf4d266c3a",
-  sha256 = "8400c511d64eb4d26f92c5ec72535ebd0f843067515244e8b50817b0786427f9",
+  urls = ["https://github.com/abseil/abseil-cpp/archive/master.zip"],
+  strip_prefix = "abseil-cpp-master",
 )
 
 http_archive(
     name = "com_google_googletest",
-    url = "https://github.com/google/googletest/archive/dcc92d0ab6c4ce022162a23566d44f673251eee4.zip",
-    sha256 = "a6ab7c7d6fd4dd727f6012b5d85d71a73d3aa1274f529ecd4ad84eb9ec4ff767",
-    strip_prefix = "googletest-dcc92d0ab6c4ce022162a23566d44f673251eee4",
+    url = "https://github.com/google/googletest/archive/master.zip",
+    strip_prefix = "googletest-master",
+)
+
+http_archive(
+     name = "com_google_re2",
+     urls = ["https://github.com/google/re2/archive/master.zip"],
+     strip_prefix = "re2-master",
 )
 
 http_archive(
      name = "com_google_protobuf",
-     strip_prefix = "protobuf-f15ac4091f96eb88f583eaa040ed16319104ebd2",
-     urls = ["https://github.com/protocolbuffers/protobuf/archive/f15ac4091f96eb88f583eaa040ed16319104ebd2.zip"],
-     sha256 = "a6896dfb9d4df9ed733edfeac9c714336c862b030c08c9395c579727af06c89b",
+     urls = ["https://github.com/protocolbuffers/protobuf/archive/master.zip"],
+     strip_prefix = "protobuf-master",
 )
 
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
