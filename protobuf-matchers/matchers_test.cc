@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "protobuf_matchers/matchers.h"
+#include "protobuf-matchers/protocol-buffer-matchers.h"
 
 #include <iostream>
 #include <type_traits>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "protobuf_matchers/test.pb.h"
+#include "protobuf-matchers/test.pb.h"
 
 namespace protobuf_matchers {
 namespace {
 
-using ::testing::Not;
 using ::protobuf_matchers::proto::Approximately;
 using ::protobuf_matchers::proto::TreatingNaNsAsEqual;
+using ::testing::Not;
 
 TEST(Matchers, EqualsProto) {
   TestMessage m;

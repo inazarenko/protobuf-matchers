@@ -19,8 +19,8 @@ load("@rules_proto//proto:defs.bzl", "proto_library")
 cc_library(
     name = "matchers",
     testonly = 1,
-    srcs = ["matchers.cc"],
-    hdrs = ["matchers.h"],
+    srcs = ["protocol-buffer-matchers.cc"],
+    hdrs = ["protocol-buffer-matchers.h"],
     deps = [
         "@com_google_absl//absl/strings",
         "@com_google_googletest//:gtest",

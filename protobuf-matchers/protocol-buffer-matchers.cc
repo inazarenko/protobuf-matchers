@@ -24,7 +24,7 @@
  * Modifications copyright 2020 Igor Nazarenko.
  */
 
-#include "protobuf_matchers/matchers.h"
+#include "protobuf-matchers/protocol-buffer-matchers.h"
 
 #include <algorithm>
 #include <string>
