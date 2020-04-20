@@ -27,6 +27,9 @@ namespace protobuf_matchers {
 namespace {
 
 using ::protobuf_matchers::proto::Approximately;
+using ::protobuf_matchers::proto::IgnoringFieldPaths;
+using ::protobuf_matchers::proto::IgnoringFields;
+using ::protobuf_matchers::proto::IgnoringRepeatedFieldOrdering;
 using ::protobuf_matchers::proto::TreatingNaNsAsEqual;
 using ::testing::Not;
 
@@ -66,6 +69,73 @@ TEST(Matchers, TreatingNaNsAsEqual) {
 
   EXPECT_THAT(m, TreatingNaNsAsEqual(EqualsProto("weight: nan")));
   EXPECT_THAT(m, Not(EqualsProto("weight: nan")));
+}
+
+TEST(Matchers, IgnoringFields) {
+  TestMessage m;
+  m.set_name("foo");
+  m.set_id(12);
+
+  EXPECT_THAT(m, IgnoringFields({"protobuf_matchers.TestMessage.id"},
+                                EqualsProto("name: 'foo' id: 13")));
+  EXPECT_THAT(m, IgnoringFields({"protobuf_matchers.TestMessage.name"},
+                                EqualsProto("id: 12")));
+}
+
+TEST(Matchers, IgnoringFieldPaths) {
+  TestMessage m;
+  m.set_name("foo");
+  m.set_id(12);
+
+  EXPECT_THAT(m, IgnoringFieldPaths({"id"}, EqualsProto("name: 'foo' id: 13")));
+  EXPECT_THAT(m, IgnoringFieldPaths({"name"}, EqualsProto("id: 12")));
+}
+
+TEST(Matchers, IgnoringFieldPathsNested) {
+  Container c;
+  c.mutable_singular()->set_id(13);
+  c.mutable_singular()->set_name("bar");
+
+  EXPECT_THAT(
+      c, IgnoringFieldPaths({"singular.name"},
+                            EqualsProto("singular { name: 'foo' id: 13 }")));
+}
+
+TEST(Matchers, IgnoringFieldPathsRepeatedIndex) {
+  Container c;
+  c.add_plural()->set_id(10);
+  c.add_plural()->set_id(20);
+
+  EXPECT_THAT(
+      c, IgnoringFieldPaths({"plural[0].id"},
+                            EqualsProto("plural {id: 11} plural {id: 20}")));
+}
+
+TEST(Matchers, IgnoringFieldPathsRepeatedNested) {
+  Container c;
+  c.add_plural()->set_id(10);
+  c.add_plural()->set_id(20);
+
+  EXPECT_THAT(
+      c, IgnoringFieldPaths({"plural.id"},
+                            EqualsProto("plural {id: 11} plural {id: 21}")));
+}
+
+TEST(Matchers, IgnoringRepeatedFieldOrdering) {
+  Container c;
+  c.add_xs(10);
+  c.add_xs(20);
+
+  EXPECT_THAT(c, IgnoringRepeatedFieldOrdering(EqualsProto("xs: 20 xs: 10")));
+}
+
+TEST(Matchers, IgnoringRepeatedFieldOrderingNested) {
+  Container c;
+  c.add_plural()->set_id(10);
+  c.add_plural()->set_id(20);
+
+  EXPECT_THAT(c, IgnoringRepeatedFieldOrdering(
+                     EqualsProto("plural {id: 20} plural {id: 10}")));
 }
 
 }  // namespace

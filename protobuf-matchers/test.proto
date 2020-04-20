@@ -22,3 +22,10 @@ message TestMessage {
   optional int32 id = 2;
   optional double weight = 3;
 }
+
+message Container {
+  optional int32 x = 1;
+  repeated int32 xs = 2;
+  optional TestMessage singular = 3;
+  repeated TestMessage plural = 4;
+}
