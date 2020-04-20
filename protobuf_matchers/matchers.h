@@ -29,7 +29,7 @@
 // WHAT THIS IS
 // ============
 //
-// This library defines the following matchers in the ::testing_protobuf namespace:
+// This library defines the following matchers in the ::protobuf_matchers namespace:
 //
 //   EqualsProto(pb)              The argument equals pb.
 //   EqualsInitializedProto(pb)   The argument is initialized and equals pb.
@@ -58,7 +58,7 @@
 // fields are different).
 //
 // This library also defines the following matcher transformer
-// functions in the ::testing_protobuf::proto namespace:
+// functions in the ::protobuf_matchers::proto namespace:
 //
 //   Approximately(m, margin, fraction)
 //                     The same as m, except that it compares
@@ -161,11 +161,11 @@
 // EXAMPLES
 // ========
 //
-//   using ::testing_protobuf::EqualsProto;
-//   using ::testing_protobuf::EquivToProto;
-//   using ::testing_protobuf::proto::Approximately;
-//   using ::testing_protobuf::proto::Partially;
-//   using ::testing_protobuf::proto::WhenDeserialized;
+//   using ::protobuf_matchers::EqualsProto;
+//   using ::protobuf_matchers::EquivToProto;
+//   using ::protobuf_matchers::proto::Approximately;
+//   using ::protobuf_matchers::proto::Partially;
+//   using ::protobuf_matchers::proto::WhenDeserialized;
 //
 //   // my_pb.Equals(expected_pb).
 //   EXPECT_THAT(my_pb, EqualsProto(expected_pb));
@@ -191,8 +191,8 @@
 //   // the type of the protobuf.
 //   // EXPECT_THAT(data, WhenDeserialized(EqualsProto("foo: 1")));
 
-#ifndef THIRD_PARTY_NUCLEUS_TESTING_PROTOCOL_BUFFER_MATCHERS_H_
-#define THIRD_PARTY_NUCLEUS_TESTING_PROTOCOL_BUFFER_MATCHERS_H_
+#ifndef PROTOBUF_MATCHERS_MATCHERS_H_
+#define PROTOBUF_MATCHERS_MATCHERS_H_
 
 #include <initializer_list>
 #include <iostream>
@@ -213,7 +213,7 @@
 #include "google/protobuf/util/field_comparator.h"
 #include "google/protobuf/util/message_differencer.h"
 
-namespace testing_protobuf {
+namespace protobuf_matchers {
 
 namespace internal {
 
@@ -1135,6 +1135,6 @@ WhenDeserializedAs(const InnerMatcher& inner_matcher) {
 }
 
 }  // namespace proto
-}  // namespace testing_protobuf
+}  // namespace protobuf_matchers
 
-#endif  // THIRD_PARTY_NUCLEUS_TESTING_PROTOCOL_BUFFER_MATCHERS_H_
+#endif  // PROTOBUF_MATCHERS_MATCHERS_H_

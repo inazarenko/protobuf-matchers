@@ -21,10 +21,15 @@ http_archive(
     urls = ["https://github.com/abseil/abseil-cpp/archive/master.zip"],
 )
 
-http_archive(
+# http_archive(
+#     name = "com_google_googletest",
+#     strip_prefix = "googletest-master",
+#     url = "https://github.com/google/googletest/archive/master.zip",
+# )
+
+local_repository(
     name = "com_google_googletest",
-    strip_prefix = "googletest-master",
-    url = "https://github.com/google/googletest/archive/master.zip",
+    path = "/home/igor/src/googletest",
 )
 
 http_archive(

@@ -1,6 +1,5 @@
 /*
- * Copyright 2018 Google LLC.
- *
+ * Copyright 2020 Igor Nazarenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+syntax = "proto2";
 
-#include "google/protobuf/empty.pb.h"
-#include <gmock/gmock-generated-matchers.h>
-#include <gmock/gmock-matchers.h>
-#include <gmock/gmock-more-matchers.h>
+package protobuf_matchers;
 
-#include "tensorflow/core/platform/test.h"
-#include "nucleus/testing/protocol-buffer-matchers.h"
-
-using nucleus::EqualsProto;
-
-namespace {
-
-TEST(GunitExtrasTest, EqualsProto) {
-  const google::protobuf::Empty empty;
-  EXPECT_THAT(empty, EqualsProto(empty));
+message TestMessage {
+  optional string name = 1;
+  optional int32 id = 2;
+  optional double weight = 3;
 }
-
-}  // namespace

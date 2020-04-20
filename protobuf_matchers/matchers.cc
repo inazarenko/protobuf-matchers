@@ -24,7 +24,7 @@
  * Modifications copyright 2020 Igor Nazarenko.
  */
 
-#include "testing/protobuf/protocol-buffer-matchers.h"
+#include "protobuf_matchers/matchers.h"
 
 #include <algorithm>
 #include <string>
@@ -40,7 +40,7 @@
 #include "google/protobuf/util/message_differencer.h"
 #include "re2/re2.h"
 
-namespace testing_protobuf {
+namespace protobuf_matchers {
 namespace internal {
 
 using RegExpStringPiece = re2::StringPiece;
@@ -410,4 +410,4 @@ bool ProtoMatcherBase::MatchAndExplain(
 }
 
 }  // namespace internal
-}  // namespace testing_protobuf
+}  // namespace protobuf_matchers

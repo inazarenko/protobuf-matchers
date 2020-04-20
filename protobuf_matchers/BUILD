@@ -19,8 +19,8 @@ load("@rules_proto//proto:defs.bzl", "proto_library")
 cc_library(
     name = "matchers",
     testonly = 1,
-    srcs = ["protocol-buffer-matchers.cc"],
-    hdrs = ["protocol-buffer-matchers.h"],
+    srcs = ["matchers.cc"],
+    hdrs = ["matchers.h"],
     deps = [
         "@com_google_absl//absl/strings",
         "@com_google_googletest//:gtest",
@@ -30,23 +30,24 @@ cc_library(
 )
 
 proto_library(
-    name = "deleteme_proto",
-    srcs = ["deleteme.proto"],
+    name = "test_proto",
+    srcs = ["test.proto"],
 )
 
 cc_proto_library(
-    name = "deleteme_cc_proto",
-    deps = [":deleteme_proto"],
+    name = "test_cc_proto",
+    deps = [":test_proto"],
 )
 
 cc_test(
-    name = "temp_test",
+    name = "matchers_test",
     size = "small",
     srcs = [
-        "temp_test.cc",
+        "matchers_test.cc",
     ],
     deps = [
-        ":deleteme_cc_proto",
+        ":test_cc_proto",
+        ":matchers",
         "@com_google_googletest//:gtest_main",
     ],
 )
