@@ -17,7 +17,7 @@ load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_proto_library", "c
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
 cc_library(
-    name = "matchers",
+    name = "protobuf-matchers",
     testonly = 1,
     srcs = ["protocol-buffer-matchers.cc"],
     hdrs = ["protocol-buffer-matchers.h"],
@@ -47,7 +47,7 @@ cc_test(
     ],
     deps = [
         ":test_cc_proto",
-        ":matchers",
+        ":protobuf-matchers",
         "@com_google_googletest//:gtest_main",
     ],
 )

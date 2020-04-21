@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// clang-format off
 #include "protobuf-matchers/protocol-buffer-matchers.h"
+// clang-format on
 
 #include <iostream>
 #include <type_traits>
@@ -31,6 +33,7 @@ using ::protobuf_matchers::proto::IgnoringFieldPaths;
 using ::protobuf_matchers::proto::IgnoringFields;
 using ::protobuf_matchers::proto::IgnoringRepeatedFieldOrdering;
 using ::protobuf_matchers::proto::TreatingNaNsAsEqual;
+using ::protobuf_matchers::proto::Partially;
 using ::testing::Not;
 
 TEST(Matchers, EqualsProto) {
@@ -136,6 +139,15 @@ TEST(Matchers, IgnoringRepeatedFieldOrderingNested) {
 
   EXPECT_THAT(c, IgnoringRepeatedFieldOrdering(
                      EqualsProto("plural {id: 20} plural {id: 10}")));
+}
+
+TEST(Matchers, Partially) {
+  TestMessage m;
+  m.set_name("foo");
+  m.set_id(12);
+
+  EXPECT_THAT(m, Partially(EqualsProto("id: 12")));
+  EXPECT_THAT(m, Partially(EqualsProto("name: 'foo'")));
 }
 
 }  // namespace
