@@ -21,6 +21,7 @@ cc_library(
     testonly = 1,
     srcs = ["protocol-buffer-matchers.cc"],
     hdrs = ["protocol-buffer-matchers.h"],
+    visibility = ["//visibility:public"],
     deps = [
         "@com_google_absl//absl/strings",
         "@com_google_googletest//:gtest",
