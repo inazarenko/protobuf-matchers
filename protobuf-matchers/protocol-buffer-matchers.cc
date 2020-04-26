@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * This file was originally released under the above license as a part
- * of Google Nucleus project at:
- *
- *      https://github.com/google/nucleus
+ * This file was originally released as a part of Google Nucleus project
+ * at: https://github.com/google/nucleus
  *
  * It was modified to move the matchers to a different namespace and
  * remove dependencies on Tensorflow and Nucleus.
  *
  * Modifications copyright 2020 Igor Nazarenko.
  */
-
 #include "protobuf-matchers/protocol-buffer-matchers.h"
 
 #include <algorithm>

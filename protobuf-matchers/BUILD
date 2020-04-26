@@ -40,14 +40,14 @@ cc_proto_library(
 )
 
 cc_test(
-    name = "matchers_test",
+    name = "protobuf-matchers-test",
     size = "small",
     srcs = [
-        "matchers_test.cc",
+        "protocol-buffer-matchers-test.cc",
     ],
     deps = [
-        ":test_cc_proto",
         ":protobuf-matchers",
+        ":test_cc_proto",
         "@com_google_googletest//:gtest_main",
     ],
 )

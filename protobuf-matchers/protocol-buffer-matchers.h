@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * This file was originally released under the above license as a part
- * of Google Nucleus project at:
- *
- *      https://github.com/google/nucleus
+ * This file was originally released as a part of Google Nucleus project
+ * at: https://github.com/google/nucleus
  *
  * It was modified to move the matchers to a different namespace and
  * remove dependencies on Tensorflow and Nucleus.
@@ -666,7 +664,7 @@ class WhenDeserializedMatcherBase {
     }
 
     *os << "which deserializes to ";
-    UniversalPrint(*deserialized_arg, os);
+    ::testing::internal::UniversalPrint(*deserialized_arg, os);
 
     ::testing::StringMatchResultListener inner_listener;
     const bool match =
@@ -1130,7 +1128,7 @@ template <class Proto, class InnerMatcher>
 inline ::testing::PolymorphicMatcher<
     internal::WhenDeserializedAsMatcher<Proto> >
 WhenDeserializedAs(const InnerMatcher& inner_matcher) {
-  return MakePolymorphicMatcher(internal::WhenDeserializedAsMatcher<Proto>(
+  return ::testing::MakePolymorphicMatcher(internal::WhenDeserializedAsMatcher<Proto>(
       ::testing::SafeMatcherCast<const Proto&>(inner_matcher)));
 }
 

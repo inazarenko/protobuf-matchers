@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2020 Igor Nazarenko
  *
@@ -14,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// clang-format off
 #include "protobuf-matchers/protocol-buffer-matchers.h"
-// clang-format on
 
 #include <iostream>
 #include <type_traits>
@@ -32,8 +29,10 @@ using ::protobuf_matchers::proto::Approximately;
 using ::protobuf_matchers::proto::IgnoringFieldPaths;
 using ::protobuf_matchers::proto::IgnoringFields;
 using ::protobuf_matchers::proto::IgnoringRepeatedFieldOrdering;
-using ::protobuf_matchers::proto::TreatingNaNsAsEqual;
 using ::protobuf_matchers::proto::Partially;
+using ::protobuf_matchers::proto::TreatingNaNsAsEqual;
+using ::protobuf_matchers::proto::WhenDeserialized;
+using ::protobuf_matchers::proto::WhenDeserializedAs;
 using ::testing::Not;
 
 TEST(Matchers, EqualsProto) {
@@ -148,6 +147,17 @@ TEST(Matchers, Partially) {
 
   EXPECT_THAT(m, Partially(EqualsProto("id: 12")));
   EXPECT_THAT(m, Partially(EqualsProto("name: 'foo'")));
+}
+
+TEST(Matchers, WhenDeserialized) {
+  TestMessage m;
+  m.set_name("foo");
+  m.set_id(12);
+  std::string bytes = m.SerializeAsString();
+
+  EXPECT_THAT(bytes, WhenDeserialized(EqualsProto(m)));
+  EXPECT_THAT(bytes, WhenDeserializedAs<TestMessage>(
+                         EqualsProto("id: 12 name: 'foo'")));
 }
 
 }  // namespace
