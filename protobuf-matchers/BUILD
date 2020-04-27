@@ -26,7 +26,7 @@ cc_library(
         "@com_google_absl//absl/strings",
         "@com_google_googletest//:gtest",
         "@com_google_protobuf//:protobuf",
-        "@com_google_re2//:re2",
+        "@com_googlesource_code_re2//:re2",
     ],
 )
 
