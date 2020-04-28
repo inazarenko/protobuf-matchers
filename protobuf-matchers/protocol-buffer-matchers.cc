@@ -307,6 +307,9 @@ void ConfigureDifferencer(
     comparator->SetDefaultFractionAndMargin(comp.float_fraction,
                                             comp.float_margin);
   }
+  if (comp.differencer_config_function) {
+    comp.differencer_config_function(comparator, differencer);
+  }
   differencer->set_field_comparator(comparator);
 }
 

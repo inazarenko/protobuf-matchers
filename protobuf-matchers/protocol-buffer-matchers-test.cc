@@ -19,6 +19,7 @@
 #include <type_traits>
 
 #include "gmock/gmock.h"
+#include "google/protobuf/util/message_differencer.h"
 #include "gtest/gtest.h"
 #include "protobuf-matchers/test.pb.h"
 
@@ -33,6 +34,7 @@ using ::protobuf_matchers::proto::Partially;
 using ::protobuf_matchers::proto::TreatingNaNsAsEqual;
 using ::protobuf_matchers::proto::WhenDeserialized;
 using ::protobuf_matchers::proto::WhenDeserializedAs;
+using ::protobuf_matchers::proto::WithDifferencerConfig;
 using ::testing::Each;
 using ::testing::Not;
 
@@ -139,7 +141,8 @@ TEST(Matchers, DISABLED_IgnoringFieldPathsTerminalIndex) {
   c.add_xs(1);
   c.add_xs(2);
 
-  // Fails with "Terminally ignoring fields by index is currently not supported".
+  // Fails with "Terminally ignoring fields by index is currently not
+  // supported".
   EXPECT_THAT(c, IgnoringFieldPaths({"xs[0]"}, EqualsProto("xs: 1 xs: 2")));
 }
 
@@ -180,6 +183,27 @@ TEST(Matchers, WhenDeserialized) {
               WhenDeserialized(EqualsProto<TestMessage>("id: 12 name: 'foo'")));
   EXPECT_THAT(bytes, WhenDeserializedAs<TestMessage>(
                          EqualsProto("id: 12 name: 'foo'")));
+}
+
+TEST(Matchers, WithDifferencerConfig) {
+  Container c;
+  auto* m1 = c.add_plural();
+  m1->set_id(10);
+  m1->set_name("10");
+  auto* m2 = c.add_plural();
+  m2->set_id(20);
+  m2->set_name("20");
+
+  EXPECT_THAT(
+      c, WithDifferencerConfig(
+             [](::google::protobuf::util::DefaultFieldComparator* comparator,
+                ::google::protobuf::util::MessageDifferencer* differ) {
+               differ->TreatAsMap(Container::descriptor()->FindFieldByNumber(
+                                      Container::kPluralFieldNumber),
+                                  TestMessage::descriptor()->FindFieldByNumber(
+                                      TestMessage::kIdFieldNumber));
+             },
+             EqualsProto("plural {id:20 name:'20'} plural {id:10 name:'10'}")));
 }
 
 }  // namespace

@@ -27,7 +27,8 @@
 // WHAT THIS IS
 // ============
 //
-// This library defines the following matchers in the ::protobuf_matchers namespace:
+// This library defines the following matchers in the ::protobuf_matchers
+// namespace:
 //
 //   EqualsProto(pb)              The argument equals pb.
 //   EqualsInitializedProto(pb)   The argument is initialized and equals pb.
@@ -146,6 +147,10 @@
 //                     of the deserialized protobuf must be PB.  Since
 //                     the protobuf type is known, pb_matcher can be *any*
 //                     valid protobuf matcher, including EqualsProto("...").
+//   WithDifferencerConfig(config_function, m)
+//                     Returns a matcher that is the same as a given inner
+//                     matcher, but applies a given function to the message
+//                     differencer before using it.
 //
 // Approximately(), TreatingNaNsAsEqual(), Partially(), IgnoringFields(), and
 // IgnoringRepeatedFieldOrdering() can be combined (nested)
@@ -192,6 +197,7 @@
 #ifndef PROTOBUF_MATCHERS_MATCHERS_H_
 #define PROTOBUF_MATCHERS_MATCHERS_H_
 
+#include <functional>
 #include <initializer_list>
 #include <iostream>
 #include <memory>
@@ -212,6 +218,10 @@
 #include "google/protobuf/util/message_differencer.h"
 
 namespace protobuf_matchers {
+
+using DifferencerConfigFunction =
+    std::function<void(google::protobuf::util::DefaultFieldComparator*,
+                       google::protobuf::util::MessageDifferencer*)>;
 
 namespace internal {
 
@@ -274,6 +284,7 @@ struct ProtoComparison {
   double float_fraction;  // only used when has_custom_fraction is set.
   std::vector<std::string> ignore_fields;
   std::vector<std::string> ignore_field_paths;
+  DifferencerConfigFunction differencer_config_function;
 };
 
 // Whether the protobuf must be initialized.
@@ -392,6 +403,10 @@ class ProtoMatcherBase {
     comp_->repeated_field_comp = kProtoCompareRepeatedFieldsIgnoringOrdering;
   }
 
+  void SetDifferencerConfigFunction(DifferencerConfigFunction func) {
+    comp_->differencer_config_function = func;
+  }
+
   // Sets the margin of error for approximate floating point comparison.
   void SetMargin(double margin) {
     GTEST_CHECK_(margin >= 0.0)
@@ -457,6 +472,10 @@ class ProtoMatcherBase {
         }
         *os << ") ";
       }
+    }
+
+    if (comp_->differencer_config_function) {
+      *os << "(with custom differencer config) ";
     }
 
     *os << (comp_->scope == kProtoPartial ? "partially " : "")
@@ -836,6 +855,10 @@ class TupleProtoMatcher {
     comp_->repeated_field_comp = kProtoCompareRepeatedFieldsIgnoringOrdering;
   }
 
+  void SetDifferencerConfigFunction(DifferencerConfigFunction func) {
+    comp_->differencer_config_function = func;
+  }
+
   // Sets the margin of error for approximate floating point comparison.
   void SetMargin(double margin) {
     GTEST_CHECK_(margin >= 0.0)
@@ -1128,8 +1151,29 @@ template <class Proto, class InnerMatcher>
 inline ::testing::PolymorphicMatcher<
     internal::WhenDeserializedAsMatcher<Proto> >
 WhenDeserializedAs(const InnerMatcher& inner_matcher) {
-  return ::testing::MakePolymorphicMatcher(internal::WhenDeserializedAsMatcher<Proto>(
-      ::testing::SafeMatcherCast<const Proto&>(inner_matcher)));
+  return ::testing::MakePolymorphicMatcher(
+      internal::WhenDeserializedAsMatcher<Proto>(
+          ::testing::SafeMatcherCast<const Proto&>(inner_matcher)));
+}
+
+// Returns a matcher that is the same as a given inner matcher, but applies a
+// given function to the message differencer before using it for the
+// comparison between the expected and actual protobufs. The function will be
+// applied after any configuration settings specified by other transformers.
+// Overwriting these settings may result in misleading test failure messages.
+//
+// Prefer more specific transformer functions if possible; they result in
+// better error messages and more readable test code. In particular, note that
+// there's currently no reason to modify field comparator passed to the config
+// function; all its customization is available through higher-level
+// transformers, e.g. Approximately.
+template <class InnerProtoMatcher>
+inline InnerProtoMatcher WithDifferencerConfig(
+    DifferencerConfigFunction differencer_config_function,
+    InnerProtoMatcher inner_proto_matcher) {
+  inner_proto_matcher.mutable_impl().SetDifferencerConfigFunction(
+      differencer_config_function);
+  return inner_proto_matcher;
 }
 
 }  // namespace proto
