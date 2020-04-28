@@ -33,6 +33,7 @@ using ::protobuf_matchers::proto::Partially;
 using ::protobuf_matchers::proto::TreatingNaNsAsEqual;
 using ::protobuf_matchers::proto::WhenDeserialized;
 using ::protobuf_matchers::proto::WhenDeserializedAs;
+using ::testing::Each;
 using ::testing::Not;
 
 TEST(Matchers, EqualsProto) {
@@ -44,6 +45,16 @@ TEST(Matchers, EqualsProto) {
   EXPECT_THAT(m, EqualsProto(expected));
   EXPECT_THAT(m, EqualsProto("id: 42 name: 'foo'"));
   EXPECT_THAT(m, Not(EqualsProto("id: 43 name: 'foo'")));
+}
+
+TEST(Matchers, EqualsProtoAsElementMatcher) {
+  TestMessage m;
+  m.set_id(42);
+  m.set_name("foo");
+
+  std::vector<TestMessage> v{m, m, m};
+
+  EXPECT_THAT(v, Each(EqualsProto("id: 42 name: 'foo'")));
 }
 
 TEST(Matchers, EquivToProto) {
@@ -123,6 +134,15 @@ TEST(Matchers, IgnoringFieldPathsRepeatedNested) {
                             EqualsProto("plural {id: 11} plural {id: 21}")));
 }
 
+TEST(Matchers, DISABLED_IgnoringFieldPathsTerminalIndex) {
+  Container c;
+  c.add_xs(1);
+  c.add_xs(2);
+
+  // Fails with "Terminally ignoring fields by index is currently not supported".
+  EXPECT_THAT(c, IgnoringFieldPaths({"xs[0]"}, EqualsProto("xs: 1 xs: 2")));
+}
+
 TEST(Matchers, IgnoringRepeatedFieldOrdering) {
   Container c;
   c.add_xs(10);
@@ -156,6 +176,8 @@ TEST(Matchers, WhenDeserialized) {
   std::string bytes = m.SerializeAsString();
 
   EXPECT_THAT(bytes, WhenDeserialized(EqualsProto(m)));
+  EXPECT_THAT(bytes,
+              WhenDeserialized(EqualsProto<TestMessage>("id: 12 name: 'foo'")));
   EXPECT_THAT(bytes, WhenDeserializedAs<TestMessage>(
                          EqualsProto("id: 12 name: 'foo'")));
 }
