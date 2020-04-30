@@ -8,8 +8,8 @@ written using Google Test framework. E.g.
   #include "protobuf-matchers/protocol-buffer-matchers.h"
   ...
   using ::protobuf_matchers::EqualsProto;
-  using ::protobuf_matchers::proto::Approximately;
-  using ::protobuf_matchers::proto::Partially;
+  using ::protobuf_matchers::Approximately;
+  using ::protobuf_matchers::Partially;
   ...
   EXPECT_THAT(msg, EqualsProto("val: 10.0 is_null: false"));
   EXPECT_THAT(msg, Partially(Approximately(EqualsProto("val: 10.0000001"))));
