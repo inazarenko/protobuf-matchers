@@ -57,7 +57,7 @@
 // fields are different).
 //
 // This library also defines the following matcher transformer
-// functions in the ::protobuf_matchers::proto namespace:
+// functions in the ::protobuf_matchers namespace:
 //
 //   Approximately(m, margin, fraction)
 //                     The same as m, except that it compares
@@ -1020,8 +1020,6 @@ inline internal::PolymorphicProtoMatcher EquivToInitializedProto(
       internal::MakePartialProtoFromAscii<Proto>(str));
 }
 
-namespace proto {
-
 // Approximately(m) returns a matcher that is the same as m, except
 // that it compares floating-point fields approximately (using
 // google::protobuf::util::MessageDifferencer's APPROXIMATE comparison option).
@@ -1176,7 +1174,22 @@ inline InnerProtoMatcher WithDifferencerConfig(
   return inner_proto_matcher;
 }
 
+// Aliases in this namespace are provided for historical reasons. Prefer directly
+// referring to the definitions in ::protobuf_matchers.
+namespace proto {
+
+using ::protobuf_matchers::Approximately;
+using ::protobuf_matchers::TreatingNaNsAsEqual;
+using ::protobuf_matchers::IgnoringFields;
+using ::protobuf_matchers::IgnoringFieldPaths;
+using ::protobuf_matchers::IgnoringRepeatedFieldOrdering;
+using ::protobuf_matchers::Partially;
+using ::protobuf_matchers::WhenDeserialized;
+using ::protobuf_matchers::WhenDeserializedAs;
+using ::protobuf_matchers::WithDifferencerConfig;
+
 }  // namespace proto
+
 }  // namespace protobuf_matchers
 
 #endif  // PROTOBUF_MATCHERS_MATCHERS_H_

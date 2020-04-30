@@ -26,15 +26,6 @@
 namespace protobuf_matchers {
 namespace {
 
-using ::protobuf_matchers::proto::Approximately;
-using ::protobuf_matchers::proto::IgnoringFieldPaths;
-using ::protobuf_matchers::proto::IgnoringFields;
-using ::protobuf_matchers::proto::IgnoringRepeatedFieldOrdering;
-using ::protobuf_matchers::proto::Partially;
-using ::protobuf_matchers::proto::TreatingNaNsAsEqual;
-using ::protobuf_matchers::proto::WhenDeserialized;
-using ::protobuf_matchers::proto::WhenDeserializedAs;
-using ::protobuf_matchers::proto::WithDifferencerConfig;
 using ::testing::Each;
 using ::testing::Not;
 
