@@ -1156,15 +1156,26 @@ WhenDeserializedAs(const InnerMatcher& inner_matcher) {
 
 // Returns a matcher that is the same as a given inner matcher, but applies a
 // given function to the message differencer before using it for the
-// comparison between the expected and actual protobufs. The function will be
-// applied after any configuration settings specified by other transformers.
-// Overwriting these settings may result in misleading test failure messages.
+// comparison between the expected and actual protobufs.
 //
 // Prefer more specific transformer functions if possible; they result in
-// better error messages and more readable test code. In particular, note that
-// there's currently no reason to modify field comparator passed to the config
-// function; all its customization is available through higher-level
+// better error messages and more readable test code.
+//
+// By default, the differencer is configured to use the field comparator which
+// is also passed to the config function. It's possible to modify that
+// comparator, although it's preferable to customize it through other
 // transformers, e.g. Approximately.
+//
+// It's also possible to replace the comparator entirely, by passing it to
+// set_field_comparator() method of the provided differencer. The user retains
+// the ownership over the comparator and must guarantee that its lifetime
+// exceeds the lifetime of the matcher.
+//
+// The config function will be applied after any configuration settings
+// specified by other transformers. Overwriting these settings may result in
+// misleading test failure messages; in particular, a config function that
+// provides its own field comparator should not be used with transformers that
+// rely on the default comparator, i.e. Approximately and TreatingNaNsAsEqual.
 template <class InnerProtoMatcher>
 inline InnerProtoMatcher WithDifferencerConfig(
     DifferencerConfigFunction differencer_config_function,

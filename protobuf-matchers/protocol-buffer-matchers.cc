@@ -307,10 +307,10 @@ void ConfigureDifferencer(
     comparator->SetDefaultFractionAndMargin(comp.float_fraction,
                                             comp.float_margin);
   }
+  differencer->set_field_comparator(comparator);
   if (comp.differencer_config_function) {
     comp.differencer_config_function(comparator, differencer);
   }
-  differencer->set_field_comparator(comparator);
 }
 
 // Returns true iff actual and expected are comparable and match.  The

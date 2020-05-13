@@ -27,7 +27,17 @@ namespace protobuf_matchers {
 namespace {
 
 using ::testing::Each;
+using ::testing::EndsWith;
+using ::testing::HasSubstr;
 using ::testing::Not;
+using ::testing::SafeMatcherCast;
+
+template <typename T, typename M>
+inline std::string GetExplanation(M matcher, const T& value) {
+  std::stringstream ss;
+  SafeMatcherCast<const T&>(matcher).ExplainMatchResultTo(value, &ss);
+  return ss.str();
+}
 
 TEST(Matchers, EqualsProto) {
   TestMessage m;
@@ -37,7 +47,8 @@ TEST(Matchers, EqualsProto) {
   TestMessage expected = m;
   EXPECT_THAT(m, EqualsProto(expected));
   EXPECT_THAT(m, EqualsProto("id: 42 name: 'foo'"));
-  EXPECT_THAT(m, Not(EqualsProto("id: 43 name: 'foo'")));
+  EXPECT_THAT(GetExplanation(EqualsProto("id: 43 name: 'foo'"), m),
+              EndsWith("modified: id: 43 -> 42"));
 }
 
 TEST(Matchers, EqualsProtoAsElementMatcher) {
@@ -66,7 +77,9 @@ TEST(Matchers, Approximately) {
   m.set_weight(1.0);
 
   EXPECT_THAT(m, Approximately(EqualsProto("weight: 0.999"), 0.01));
-  EXPECT_THAT(m, Not(Approximately(EqualsProto("weight: 0.9"), 0.01)));
+  EXPECT_THAT(
+      GetExplanation(Approximately(EqualsProto("weight: 0.9"), 0.01), m),
+      HasSubstr("modified: weight: 0.9 -> 1"));
 }
 
 TEST(Matchers, TreatingNaNsAsEqual) {
@@ -74,7 +87,8 @@ TEST(Matchers, TreatingNaNsAsEqual) {
   m.set_weight(0.0 / 0.0);
 
   EXPECT_THAT(m, TreatingNaNsAsEqual(EqualsProto("weight: nan")));
-  EXPECT_THAT(m, Not(EqualsProto("weight: nan")));
+  EXPECT_THAT(GetExplanation(EqualsProto("weight: nan"), m),
+    HasSubstr("weight: nan -> nan"));
 }
 
 TEST(Matchers, IgnoringFields) {
@@ -195,6 +209,58 @@ TEST(Matchers, WithDifferencerConfig) {
                                       TestMessage::kIdFieldNumber));
              },
              EqualsProto("plural {id:20 name:'20'} plural {id:10 name:'10'}")));
+}
+
+// Compares all singular int32 fields modulo 10.
+class ModuloComparator : public ::google::protobuf::util::FieldComparator {
+ public:
+  ComparisonResult Compare(
+      const ::google::protobuf::Message& message_1,
+      const ::google::protobuf::Message& message_2,
+      const ::google::protobuf::FieldDescriptor* field, int index_1,
+      int index_2,
+      const ::google::protobuf::util::FieldContext* field_context) override {
+    if (!field->is_repeated() &&
+        field->cpp_type() ==
+            ::google::protobuf::FieldDescriptor::CPPTYPE_INT32) {
+      int32_t a = message_1.GetReflection()->GetInt32(message_1, field);
+      int32_t b = message_2.GetReflection()->GetInt32(message_2, field);
+      return ((a % 10) == (b % 10)) ? SAME : DIFFERENT;
+    }
+    return default_.Compare(message_1, message_2, field, index_1, index_2,
+                            field_context);
+  }
+
+  static ModuloComparator* instance() {
+    static ModuloComparator* comparator = new ModuloComparator;
+    return comparator;
+  }
+
+ private:
+  ::google::protobuf::util::DefaultFieldComparator default_;
+};
+
+template <typename InnerMatcher>
+InnerMatcher Modulo10(InnerMatcher m) {
+  return WithDifferencerConfig(
+      [](::google::protobuf::util::DefaultFieldComparator* unused,
+         ::google::protobuf::util::MessageDifferencer* differ) {
+        differ->set_field_comparator(ModuloComparator::instance());
+      },
+      m);
+}
+
+TEST(Matchers, WithCustomFieldComparator) {
+  Container c;
+  c.set_x(45);
+  c.add_plural()->set_id(11);
+  c.add_plural()->set_id(22);
+
+  EXPECT_THAT(c, Modulo10(EqualsProto("x:55 plural {id:41} plural {id:12}")));
+
+  std::string expl = GetExplanation(
+      Modulo10(EqualsProto("x:56 plural {id:11} plural {id:22}")), c);
+  EXPECT_THAT(expl, HasSubstr("modified: x: 56 -> 45"));
 }
 
 }  // namespace
