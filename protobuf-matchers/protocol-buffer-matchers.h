@@ -205,7 +205,6 @@
 #include <string>
 #include <vector>
 
-#include "absl/strings/string_view.h"
 #include "gmock/gmock-matchers.h"
 #include "gmock/gmock-more-matchers.h"
 #include "google/protobuf/descriptor.h"
@@ -702,7 +701,7 @@ class WhenDeserializedMatcherBase {
     return MatchAndExplain(&input, listener);
   }
 
-  bool MatchAndExplain(absl::string_view sp,
+  bool MatchAndExplain(std::string_view sp,
                        ::testing::MatchResultListener* listener) const {
     google::protobuf::io::ArrayInputStream input(sp.data(), sp.size());
     return MatchAndExplain(&input, listener);

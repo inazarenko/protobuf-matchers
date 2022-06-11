@@ -24,10 +24,7 @@
 #include "protobuf-matchers/protocol-buffer-matchers.h"
 
 #include <algorithm>
-#include <string>
 
-#include "absl/strings/string_view.h"
-#include "absl/strings/substitute.h"
 #include "gmock/gmock-matchers.h"
 #include "gmock/gmock-more-matchers.h"
 #include "google/protobuf/descriptor.h"
@@ -50,13 +47,15 @@ class StringErrorCollector : public google::protobuf::io::ErrorCollector {
       : error_text_(error_text) {}
 
   void AddError(int line, int column, const std::string& message) override {
-    absl::SubstituteAndAppend(error_text_, "$0($1): $2\n", line, column,
-                              message.c_str());
+    std::ostringstream stream;
+    stream << line << '(' << column << "): " << message << std::endl;
+    *error_text_ += stream.str();
   }
 
   void AddWarning(int line, int column, const std::string& message) override {
-    absl::SubstituteAndAppend(error_text_, "$0($1): $2\n", line, column,
-                              message.c_str());
+    std::ostringstream stream;
+    stream << line << '(' << column << "): " << message << std::endl;
+    *error_text_ += stream.str();
   }
 
  private:
@@ -83,10 +82,10 @@ bool ProtoComparable(const google::protobuf::Message& p,
 
 template <typename Container>
 std::string JoinStringPieces(const Container& strings,
-                             absl::string_view separator) {
+                             std::string_view separator) {
   std::stringstream stream;
-  absl::string_view sep = "";
-  for (const absl::string_view str : strings) {
+  std::string_view sep = "";
+  for (const std::string_view str : strings) {
     stream << sep << str;
     sep = separator;
   }
@@ -98,7 +97,7 @@ std::vector<const google::protobuf::FieldDescriptor*> GetFieldDescriptors(
     const google::protobuf::Descriptor* proto_descriptor,
     const std::vector<std::string>& ignore_fields) {
   std::vector<const google::protobuf::FieldDescriptor*> ignore_descriptors;
-  std::vector<absl::string_view> remaining_descriptors;
+  std::vector<std::string_view> remaining_descriptors;
 
   const google::protobuf::DescriptorPool* pool =
       proto_descriptor->file()->pool();

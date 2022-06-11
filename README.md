@@ -28,7 +28,7 @@ nix-shell -p stdenv bazel_5 jdk11_headless
 
 Build and test
 ```sh
-bazel build //protobuf-matchers:protobuf-matchers-test
+bazel build --cxxopt=-std=c++17 //protobuf-matchers:protobuf-matchers-test
 ```
 
 # Build with CMake

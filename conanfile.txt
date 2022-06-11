@@ -1,5 +1,4 @@
 [requires]
-abseil/20211102.0
 re2/20220201
 protobuf/3.21.1
 gtest/1.11.0
