@@ -18,3 +18,29 @@ written using Google Test framework. E.g.
 Matcher code was released within [Nucleus](https://github.com/google/nucleus)
 project. This fork removes dependencies on Tensorflow and the rest of the
 Nucleus code.
+
+# Build with Bazel
+
+[Nix shell](https://nixos.org) (optional)
+```sh
+nix-shell -p stdenv bazel_5 jdk11_headless
+```
+
+Build and test
+```sh
+bazel build //protobuf-matchers:protobuf-matchers-test
+```
+
+# Build with CMake
+
+Install dependencies from Conan (optional)
+```sh
+conan install . -if build -s build_type=Debug
+```
+
+Build and test
+```sh
+cmake -S . -B build -G Ninja -D CMAKE_BUILD_TYPE=Debug
+cmake --build build
+ctest --test-dir build --verbose
+```
