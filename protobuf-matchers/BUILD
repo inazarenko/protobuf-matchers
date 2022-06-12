@@ -25,7 +25,6 @@ cc_library(
     deps = [
         "@com_google_googletest//:gtest",
         "@com_google_protobuf//:protobuf",
-        "@com_googlesource_code_re2//:re2",
     ],
 )
 
