@@ -14,6 +14,7 @@ target_link_libraries(protobuf-matchers PUBLIC
     GTest::gmock)
 
 include(CTest)
+include(GoogleTest)
 if(BUILD_TESTING)
     protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS protobuf-matchers/test.proto)
     add_executable(protobuf-matchers-test
@@ -23,5 +24,5 @@ if(BUILD_TESTING)
     target_link_libraries(protobuf-matchers-test
       protobuf-matchers
       GTest::gmock_main)
-    add_test(NAME protobuf-matchers-test COMMAND protobuf-matchers-test)
+    gtest_discover_tests(protobuf-matchers-test)
 endif()
