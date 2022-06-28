@@ -24,10 +24,8 @@
 #include "protobuf-matchers/protocol-buffer-matchers.h"
 
 #include <algorithm>
-#include <string>
+#include <regex>
 
-#include "absl/strings/string_view.h"
-#include "absl/strings/substitute.h"
 #include "gmock/gmock-matchers.h"
 #include "gmock/gmock-more-matchers.h"
 #include "google/protobuf/descriptor.h"
@@ -35,12 +33,9 @@
 #include "google/protobuf/message.h"
 #include "google/protobuf/text_format.h"
 #include "google/protobuf/util/message_differencer.h"
-#include "re2/re2.h"
 
 namespace protobuf_matchers {
 namespace internal {
-
-using RegExpStringPiece = re2::StringPiece;
 
 // Utilities.
 
@@ -50,13 +45,15 @@ class StringErrorCollector : public google::protobuf::io::ErrorCollector {
       : error_text_(error_text) {}
 
   void AddError(int line, int column, const std::string& message) override {
-    absl::SubstituteAndAppend(error_text_, "$0($1): $2\n", line, column,
-                              message.c_str());
+    std::ostringstream stream;
+    stream << line << '(' << column << "): " << message << std::endl;
+    *error_text_ += stream.str();
   }
 
   void AddWarning(int line, int column, const std::string& message) override {
-    absl::SubstituteAndAppend(error_text_, "$0($1): $2\n", line, column,
-                              message.c_str());
+    std::ostringstream stream;
+    stream << line << '(' << column << "): " << message << std::endl;
+    *error_text_ += stream.str();
   }
 
  private:
@@ -83,10 +80,10 @@ bool ProtoComparable(const google::protobuf::Message& p,
 
 template <typename Container>
 std::string JoinStringPieces(const Container& strings,
-                             absl::string_view separator) {
+                             std::string_view separator) {
   std::stringstream stream;
-  absl::string_view sep = "";
-  for (const absl::string_view str : strings) {
+  std::string_view sep = "";
+  for (const std::string_view str : strings) {
     stream << sep << str;
     sep = separator;
   }
@@ -98,7 +95,7 @@ std::vector<const google::protobuf::FieldDescriptor*> GetFieldDescriptors(
     const google::protobuf::Descriptor* proto_descriptor,
     const std::vector<std::string>& ignore_fields) {
   std::vector<const google::protobuf::FieldDescriptor*> ignore_descriptors;
-  std::vector<absl::string_view> remaining_descriptors;
+  std::vector<std::string_view> remaining_descriptors;
 
   const google::protobuf::DescriptorPool* pool =
       proto_descriptor->file()->pool();
@@ -179,19 +176,6 @@ class IgnoreFieldPathCriteria
       ignored_field_path_;
 };
 
-namespace {
-bool Consume(RegExpStringPiece* s, RegExpStringPiece x) {
-  // We use the implementation of ABSL's StartsWith here until we can pick up a
-  // dependency on Abseil.
-  if (x.empty() ||
-      (s->size() >= x.size() && memcmp(s->data(), x.data(), x.size()) == 0)) {
-    s->remove_prefix(x.size());
-    return true;
-  }
-  return false;
-}
-}  // namespace
-
 // Parses a field path and returns individual components.
 std::vector<google::protobuf::util::MessageDifferencer::SpecificField>
 ParseFieldPathOrDie(const std::string& relative_field_path,
@@ -208,24 +192,28 @@ ParseFieldPathOrDie(const std::string& relative_field_path,
 
   // Regular parsers. Consume() does not handle optional captures so we split it
   // in two regexps.
-  const RE2 field_regex(R"(([^.()[\]]+))");
-  const RE2 field_subscript_regex(R"(([^.()[\]]+)\[(\d+)\])");
-  const RE2 extension_regex(R"(\(([^)]+)\))");
+  const std::regex field_regex(R"(([^.()[\]]+))");
+  const std::regex field_subscript_regex(R"(([^.()[\]]+)\[(\d+)\])");
+  const std::regex extension_regex(R"(\(([^)]+)\))");
 
-  RegExpStringPiece input(relative_field_path);
-  while (!input.empty()) {
+
+  const auto begin = std::begin(relative_field_path);
+  auto it = begin;
+  const auto end = std::end(relative_field_path);
+  while (it != end) {
     // Consume a dot, except on the first iteration.
-    if (input.size() < relative_field_path.size() && !Consume(&input, ".")) {
+    if (it != std::begin(relative_field_path) && *(it++) != '.') {
       GTEST_LOG_(FATAL) << "Cannot parse field path '" << relative_field_path
                         << "' at offset "
-                        << relative_field_path.size() - input.size()
+                        << std::distance(begin, it)
                         << ": expected '.'";
     }
     // Try to consume a field name. If that fails, consume an extension name.
     google::protobuf::util::MessageDifferencer::SpecificField field;
-    std::string name;
-    if (RE2::Consume(&input, field_subscript_regex, &name, &field.index) ||
-        RE2::Consume(&input, field_regex, &name)) {
+    std::smatch match_results;
+    if (std::regex_search(it, end, match_results, field_subscript_regex) ||
+        std::regex_search(it, end, match_results, field_regex)) {
+      std::string name = match_results[1].str();
       if (field_path.empty()) {
         field.field = root_descriptor.FindFieldByName(name);
         GTEST_CHECK_(field.field)
@@ -238,7 +226,13 @@ ParseFieldPathOrDie(const std::string& relative_field_path,
         GTEST_CHECK_(field.field) << "No such field '" << name << "' in '"
                                   << parent.field->full_name() << "'";
       }
-    } else if (RE2::Consume(&input, extension_regex, &name)) {
+      if (match_results.size() > 2 && match_results[2].matched) {
+        std::string number = match_results[2].str();
+        field.index = std::stoi(number);
+      }
+
+    } else if (std::regex_search(it, end, match_results, extension_regex)) {
+      std::string name = match_results[1].str();
       field.field = google::protobuf::DescriptorPool::generated_pool()
                         ->FindExtensionByName(name);
       GTEST_CHECK_(field.field) << "No such extension '" << name << "'";
@@ -257,9 +251,11 @@ ParseFieldPathOrDie(const std::string& relative_field_path,
     } else {
       GTEST_LOG_(FATAL) << "Cannot parse field path '" << relative_field_path
                         << "' at offset "
-                        << relative_field_path.size() - input.size()
+                        << std::distance(begin, it)
                         << ": expected field or extension";
     }
+    auto consume = match_results[0].length();
+    it += consume;
     field_path.push_back(field);
   }
 

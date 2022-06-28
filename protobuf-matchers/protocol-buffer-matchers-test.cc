@@ -88,7 +88,7 @@ TEST(Matchers, TreatingNaNsAsEqual) {
 
   EXPECT_THAT(m, TreatingNaNsAsEqual(EqualsProto("weight: nan")));
   EXPECT_THAT(GetExplanation(EqualsProto("weight: nan"), m),
-    HasSubstr("weight: nan -> nan"));
+              HasSubstr("weight: nan -> nan"));
 }
 
 TEST(Matchers, IgnoringFields) {
