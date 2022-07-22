@@ -222,6 +222,12 @@ using DifferencerConfigFunction =
     std::function<void(google::protobuf::util::DefaultFieldComparator*,
                        google::protobuf::util::MessageDifferencer*)>;
 
+// Returns a protobuf of type Proto by parsing the given TextFormat
+// representation of it.  Required fields can be missing, in which case the
+// returned protobuf will not be fully initialized.
+template <class Proto>
+Proto MakePartialProtoFromAscii(const std::string& str);
+
 namespace internal {
 
 // Utilities.
@@ -295,20 +301,6 @@ const bool kMayBeUninitialized = false;
 bool ParsePartialFromAscii(const std::string& pb_ascii,
                            google::protobuf::Message* proto,
                            std::string* error_text);
-
-// Returns a protobuf of type Proto by parsing the given TextFormat
-// representation of it.  Required fields can be missing, in which case the
-// returned protobuf will not be fully initialized.
-template <class Proto>
-Proto MakePartialProtoFromAscii(const std::string& str) {
-  Proto proto;
-  std::string error_text;
-  GTEST_CHECK_(ParsePartialFromAscii(str, &proto, &error_text))
-      << "Failed to parse \"" << str << "\" as a "
-      << proto.GetDescriptor()->full_name() << ":\n"
-      << error_text;
-  return proto;
-}
 
 // Returns true iff p and q can be compared (i.e. have the same descriptor).
 bool ProtoComparable(const google::protobuf::Message& p,
@@ -905,6 +897,20 @@ class TupleProtoMatcher {
 
 }  // namespace internal
 
+// Returns a protobuf of type Proto by parsing the given TextFormat
+// representation of it.  Required fields can be missing, in which case the
+// returned protobuf will not be fully initialized.
+template <class Proto>
+Proto MakePartialProtoFromAscii(const std::string& str) {
+  Proto proto;
+  std::string error_text;
+  GTEST_CHECK_(internal::ParsePartialFromAscii(str, &proto, &error_text))
+      << "Failed to parse \"" << str << "\" as a "
+      << proto.GetDescriptor()->full_name() << ":\n"
+      << error_text;
+  return proto;
+}
+
 // Creates a polymorphic matcher that matches a 2-tuple where
 // first.Equals(second) is true.
 inline internal::TupleProtoMatcher EqualsProto() {
@@ -939,7 +945,7 @@ inline ::testing::PolymorphicMatcher<internal::ProtoStringMatcher> EqualsProto(
 }
 template <class Proto>
 inline internal::PolymorphicProtoMatcher EqualsProto(const std::string& str) {
-  return EqualsProto(internal::MakePartialProtoFromAscii<Proto>(str));
+  return EqualsProto(MakePartialProtoFromAscii<Proto>(str));
 }
 
 // Constructs a matcher that matches the argument if
@@ -960,7 +966,7 @@ inline ::testing::PolymorphicMatcher<internal::ProtoStringMatcher> EquivToProto(
 }
 template <class Proto>
 inline internal::PolymorphicProtoMatcher EquivToProto(const std::string& str) {
-  return EquivToProto(internal::MakePartialProtoFromAscii<Proto>(str));
+  return EquivToProto(MakePartialProtoFromAscii<Proto>(str));
 }
 
 // Constructs a matcher that matches the argument if
@@ -991,8 +997,7 @@ EqualsInitializedProto(const std::string& x) {
 template <class Proto>
 inline internal::PolymorphicProtoMatcher EqualsInitializedProto(
     const std::string& str) {
-  return EqualsInitializedProto(
-      internal::MakePartialProtoFromAscii<Proto>(str));
+  return EqualsInitializedProto(MakePartialProtoFromAscii<Proto>(str));
 }
 
 // Constructs a matcher that matches an argument whose IsInitialized()
@@ -1015,8 +1020,7 @@ EquivToInitializedProto(const std::string& x) {
 template <class Proto>
 inline internal::PolymorphicProtoMatcher EquivToInitializedProto(
     const std::string& str) {
-  return EquivToInitializedProto(
-      internal::MakePartialProtoFromAscii<Proto>(str));
+  return EquivToInitializedProto(MakePartialProtoFromAscii<Proto>(str));
 }
 
 // Approximately(m) returns a matcher that is the same as m, except
@@ -1184,16 +1188,16 @@ inline InnerProtoMatcher WithDifferencerConfig(
   return inner_proto_matcher;
 }
 
-// Aliases in this namespace are provided for historical reasons. Prefer directly
-// referring to the definitions in ::protobuf_matchers.
+// Aliases in this namespace are provided for historical reasons. Prefer
+// directly referring to the definitions in ::protobuf_matchers.
 namespace proto {
 
 using ::protobuf_matchers::Approximately;
-using ::protobuf_matchers::TreatingNaNsAsEqual;
-using ::protobuf_matchers::IgnoringFields;
 using ::protobuf_matchers::IgnoringFieldPaths;
+using ::protobuf_matchers::IgnoringFields;
 using ::protobuf_matchers::IgnoringRepeatedFieldOrdering;
 using ::protobuf_matchers::Partially;
+using ::protobuf_matchers::TreatingNaNsAsEqual;
 using ::protobuf_matchers::WhenDeserialized;
 using ::protobuf_matchers::WhenDeserializedAs;
 using ::protobuf_matchers::WithDifferencerConfig;
