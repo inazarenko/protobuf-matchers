@@ -5,7 +5,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 
 find_package(Protobuf REQUIRED)
-find_package(GTest REQUIRED)
 
 add_library(protobuf-matchers protobuf-matchers/protocol-buffer-matchers.cc)
 target_include_directories(protobuf-matchers PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
@@ -15,7 +14,9 @@ target_link_libraries(protobuf-matchers PUBLIC
 
 include(CTest)
 include(GoogleTest)
-if(BUILD_TESTING)
+option(PROTOBUF_MATCHERS_BUILD_TESTING "" OFF)
+if(PROTOBUF_MATCHERS_BUILD_TESTING)
+    find_package(GTest REQUIRED)
     protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS protobuf-matchers/test.proto)
     add_executable(protobuf-matchers-test
       protobuf-matchers/protocol-buffer-matchers-test.cc
