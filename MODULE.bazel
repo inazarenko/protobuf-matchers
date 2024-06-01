@@ -14,6 +14,6 @@
 # limitations under the License.
 #
 
-module(name = "protobuf-matchers", version = "1.0")
-bazel_dep(name = "protobuf", version = "27.0", repo_name = "com_google_protobuf")
-bazel_dep(name = "googletest", version = "1.14.0", repo_name = "com_google_googletest")
+module(name = "protobuf-matchers")
+bazel_dep(name = "protobuf", version = "23.1", repo_name = "com_google_protobuf")
+bazel_dep(name = "googletest", version = "1.11.0", repo_name = "com_google_googletest")
