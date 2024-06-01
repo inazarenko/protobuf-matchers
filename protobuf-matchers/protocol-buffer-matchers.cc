@@ -44,13 +44,13 @@ class StringErrorCollector : public google::protobuf::io::ErrorCollector {
   explicit StringErrorCollector(std::string* error_text)
       : error_text_(error_text) {}
 
-  void AddError(int line, int column, const std::string& message) override {
+  void RecordError(int line, int column, std::string_view message) override {
     std::ostringstream stream;
     stream << line << '(' << column << "): " << message << std::endl;
     *error_text_ += stream.str();
   }
 
-  void AddWarning(int line, int column, const std::string& message) override {
+  void RecordWarning(int line, int column, std::string_view message) override {
     std::ostringstream stream;
     stream << line << '(' << column << "): " << message << std::endl;
     *error_text_ += stream.str();
