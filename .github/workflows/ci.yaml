@@ -4,8 +4,8 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Run the tests
-        run: bazel test //...
+        run: bazel test -j 4 //...
