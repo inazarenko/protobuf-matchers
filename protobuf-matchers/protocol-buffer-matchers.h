@@ -199,6 +199,7 @@
 
 #include <functional>
 #include <initializer_list>
+#include <iomanip>
 #include <iostream>
 #include <memory>
 #include <sstream>
