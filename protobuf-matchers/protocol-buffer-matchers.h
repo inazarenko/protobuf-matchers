@@ -201,9 +201,11 @@
 #include <initializer_list>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "gmock/gmock-matchers.h"
@@ -1185,16 +1187,16 @@ inline InnerProtoMatcher WithDifferencerConfig(
   return inner_proto_matcher;
 }
 
-// Aliases in this namespace are provided for historical reasons. Prefer directly
-// referring to the definitions in ::protobuf_matchers.
+// Aliases in this namespace are provided for historical reasons. Prefer
+// directly referring to the definitions in ::protobuf_matchers.
 namespace proto {
 
 using ::protobuf_matchers::Approximately;
-using ::protobuf_matchers::TreatingNaNsAsEqual;
-using ::protobuf_matchers::IgnoringFields;
 using ::protobuf_matchers::IgnoringFieldPaths;
+using ::protobuf_matchers::IgnoringFields;
 using ::protobuf_matchers::IgnoringRepeatedFieldOrdering;
 using ::protobuf_matchers::Partially;
+using ::protobuf_matchers::TreatingNaNsAsEqual;
 using ::protobuf_matchers::WhenDeserialized;
 using ::protobuf_matchers::WhenDeserializedAs;
 using ::protobuf_matchers::WithDifferencerConfig;
