@@ -19,6 +19,30 @@ Matcher code was released within [Nucleus](https://github.com/google/nucleus)
 project. This fork removes dependencies on Tensorflow and the rest of the
 Nucleus code.
 
+# Using as a Bazel module
+
+In your `MODULE.bazel`:
+
+```
+...
+bazel_dep(name = "protobuf-matchers", version = "0.1.0")
+...
+```
+
+In your `BUILD`:
+
+```
+cc_test(
+    ...
+    deps = [
+       ...
+       "@protobuf-matchers//protobuf-matchers",
+    ],
+)
+```
+
+See also: https://bazel.build/rules/lib/globals/module
+
 # Build with Bazel
 
 [Nix shell](https://nixos.org) (optional)
