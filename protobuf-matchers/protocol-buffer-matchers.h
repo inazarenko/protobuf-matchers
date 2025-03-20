@@ -758,7 +758,7 @@ class WhenDeserializedAsMatcher : public WhenDeserializedMatcherBase<Proto> {
   virtual Proto* MakeEmptyProto() const { return new Proto; }
 
   virtual std::string ExpectedTypeName() const {
-    return Proto().GetDescriptor()->full_name();
+    return std::string(Proto().GetDescriptor()->full_name());
   }
 
   virtual std::string TypeArgName() const { return ExpectedTypeName(); }
