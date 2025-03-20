@@ -196,7 +196,6 @@ ParseFieldPathOrDie(const std::string& relative_field_path,
   const std::regex field_subscript_regex(R"(([^.()[\]]+)\[(\d+)\])");
   const std::regex extension_regex(R"(\(([^)]+)\))");
 
-
   const auto begin = std::begin(relative_field_path);
   auto it = begin;
   const auto end = std::end(relative_field_path);
@@ -204,8 +203,7 @@ ParseFieldPathOrDie(const std::string& relative_field_path,
     // Consume a dot, except on the first iteration.
     if (it != std::begin(relative_field_path) && *(it++) != '.') {
       GTEST_LOG_(FATAL) << "Cannot parse field path '" << relative_field_path
-                        << "' at offset "
-                        << std::distance(begin, it)
+                        << "' at offset " << std::distance(begin, it)
                         << ": expected '.'";
     }
     // Try to consume a field name. If that fails, consume an extension name.
@@ -250,8 +248,7 @@ ParseFieldPathOrDie(const std::string& relative_field_path,
       }
     } else {
       GTEST_LOG_(FATAL) << "Cannot parse field path '" << relative_field_path
-                        << "' at offset "
-                        << std::distance(begin, it)
+                        << "' at offset " << std::distance(begin, it)
                         << ": expected field or extension";
     }
     auto consume = match_results[0].length();
@@ -331,8 +328,10 @@ bool ProtoCompare(const internal::ProtoComparison& comp,
 // Describes the types of the expected and the actual protocol buffer.
 std::string DescribeTypes(const google::protobuf::Message& expected,
                           const google::protobuf::Message& actual) {
-  return "whose type should be " + expected.GetDescriptor()->full_name() +
-         " but actually is " + actual.GetDescriptor()->full_name();
+  std::ostringstream s;
+  s << "whose type should be " << expected.GetDescriptor()->full_name()
+    << " but actually is " << actual.GetDescriptor()->full_name();
+  return s.str();
 }
 
 // Prints the protocol buffer pointed to by proto.

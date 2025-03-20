@@ -25,7 +25,7 @@ In your `MODULE.bazel`:
 
 ```
 ...
-bazel_dep(name = "protobuf-matchers", version = "0.1.0")
+bazel_dep(name = "protobuf-matchers", version = "0.1.1")
 ...
 ```
 
