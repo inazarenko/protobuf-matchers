@@ -24,6 +24,7 @@
 #include "protobuf-matchers/protocol-buffer-matchers.h"
 
 #include <algorithm>
+#include <memory>
 #include <regex>
 
 #include "gmock/gmock-matchers.h"
@@ -271,7 +272,7 @@ void SetIgnoredFieldPathsOrDie(
     const std::vector<std::string>& field_paths,
     google::protobuf::util::MessageDifferencer* differencer) {
   for (const std::string& field_path : field_paths) {
-    differencer->AddIgnoreCriteria(new IgnoreFieldPathCriteria(
+    differencer->AddIgnoreCriteria(std::make_unique<IgnoreFieldPathCriteria>(
         ParseFieldPathOrDie(field_path, root_descriptor)));
   }
 }
