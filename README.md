@@ -25,7 +25,7 @@ In your `MODULE.bazel`:
 
 ```
 ...
-bazel_dep(name = "protobuf-matchers", version = "0.1.1")
+bazel_dep(name = "protobuf-matchers", version = "0.1.2")
 ...
 ```
 
@@ -45,11 +45,6 @@ See also: https://bazel.build/rules/lib/globals/module
 
 # Build with Bazel
 
-[Nix shell](https://nixos.org) (optional)
-```sh
-nix-shell -p stdenv bazel_5 jdk11_headless
-```
-
 Build and test
 ```sh
 bazel build --cxxopt=-std=c++17 //protobuf-matchers:protobuf-matchers-test
@@ -57,10 +52,7 @@ bazel build --cxxopt=-std=c++17 //protobuf-matchers:protobuf-matchers-test
 
 # Build with CMake
 
-Install dependencies from Conan (optional)
-```sh
-conan install . -if build -s build_type=Debug
-```
+**WARNING**: CMake support is not actively maintained.
 
 Build and test
 ```sh
