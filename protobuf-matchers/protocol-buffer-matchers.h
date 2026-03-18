@@ -1094,7 +1094,6 @@ inline InnerProtoMatcher IgnoringFieldPaths(
   return inner_proto_matcher;
 }
 
-#ifdef LANG_CXX11
 template <class InnerProtoMatcher, class T>
 inline InnerProtoMatcher IgnoringFields(std::initializer_list<T> il,
                                         InnerProtoMatcher inner_proto_matcher) {
@@ -1110,7 +1109,6 @@ inline InnerProtoMatcher IgnoringFieldPaths(
                                                                   il.end());
   return inner_proto_matcher;
 }
-#endif  // LANG_CXX11
 
 // IgnoringRepeatedFieldOrdering(m) returns a matcher that is the same as m,
 // except that it ignores the relative ordering of elements within each repeated
