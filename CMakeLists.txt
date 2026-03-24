@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.9)
 project(protobuf-matchers)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 
@@ -98,6 +101,7 @@ include(CTest)
 include(GoogleTest)
 if(BUILD_TESTING)
     set(PROTO_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+    file(MAKE_DIRECTORY ${PROTO_BINARY_DIR})
     add_library(protobuf-matchers-proto OBJECT "${CMAKE_CURRENT_LIST_DIR}/protobuf-matchers/test.proto")
     target_link_libraries(protobuf-matchers-proto PUBLIC protobuf::libprotobuf)
     target_include_directories(protobuf-matchers-proto PUBLIC "$<BUILD_INTERFACE:${PROTO_BINARY_DIR}>")
