@@ -18,11 +18,52 @@ jobs:
 
   cmake:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # This co-iterates over the versions of the two dependencies such that
+        # every version is tested without testing all combintations.
+        include:
+          - protobuf-version: v34.1
+            googletest-version: release-1.0.1
+          - protobuf-version: v33.6
+            googletest-version: release-1.1.0
+          - protobuf-version: v32.1
+            googletest-version: release-1.2.1
+          - protobuf-version: v31.1
+            googletest-version: release-1.3.0
+          - protobuf-version: v30.2
+            googletest-version: release-1.4.0
+          - protobuf-version: v29.6
+            googletest-version: release-1.5.0
+          - protobuf-version: v28.3
+            googletest-version: release-1.6.0
+          - protobuf-version: v27.5
+            googletest-version: release-1.7.0
+          - protobuf-version: v26.1
+            googletest-version: release-1.8.1
+          - protobuf-version: v25.8
+            googletest-version: release-1.10.0
+          - protobuf-version: v24.4
+            googletest-version: v1.12.0
+          - protobuf-version: v23.4
+            googletest-version: v1.13.0
+          - protobuf-version: v22.5
+            googletest-version: v1.14.0
+          - protobuf-version: v22.5 # duplicate
+            googletest-version: v1.15.2
+          - protobuf-version: v22.5 # duplicate
+            googletest-version: v1.16.0
+          - protobuf-version: v22.5 # duplicate
+            googletest-version: v1.17.0
     steps:
       - uses: actions/checkout@v6
       - name: Set up CMake
         run: |
-          cmake -S . -B build -G Ninja
+          cmake -S . -B build -G Ninja \
+            -DPROTOBUF_MATCHERS_USE_SYSTEM_PROTOBUF=OFF \
+            -DPROTOBUF_MATCHERS_PROTOBUF_FETCH_TAG=${{ matrix.protobuf-version }} \
+            -DGOOGLETEST_MATCHERS_USE_SYSTEM_GOOGLETEST=OFF \
+            -DGOOGLETEST_MATCHERS_GOOGLETEST_FETCH_TAG=${{ matrix.googletest-version }}
       - name: Run build
         run: |
           cmake --build build
