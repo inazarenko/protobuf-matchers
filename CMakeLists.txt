@@ -97,13 +97,18 @@ target_link_libraries(protobuf-matchers PUBLIC
 include(CTest)
 include(GoogleTest)
 if(BUILD_TESTING)
-    protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS protobuf-matchers/test.proto)
+    set(PROTO_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+    add_library(protobuf-matchers-proto OBJECT "${CMAKE_CURRENT_LIST_DIR}/protobuf-matchers/test.proto")
+    target_link_libraries(protobuf-matchers-proto PUBLIC protobuf::libprotobuf)
+    target_include_directories(protobuf-matchers-proto PUBLIC "$<BUILD_INTERFACE:${PROTO_BINARY_DIR}>")
+    protobuf_generate(
+        TARGET protobuf-matchers-proto
+        PROTOC_OUT_DIR "${PROTO_BINARY_DIR}")
     add_executable(protobuf-matchers-test
-      protobuf-matchers/protocol-buffer-matchers-test.cc
-      ${PROTO_SRCS} ${PROTO_HDRS})
-    target_include_directories(protobuf-matchers-test PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+      protobuf-matchers/protocol-buffer-matchers-test.cc)
     target_link_libraries(protobuf-matchers-test
       protobuf-matchers
+      protobuf-matchers-proto
       GTest::gmock_main)
     gtest_discover_tests(protobuf-matchers-test)
 endif()
