@@ -1,7 +1,0 @@
-[requires]
-protobuf/3.21.1
-gtest/1.11.0
-
-[generators]
-cmake_find_package
-

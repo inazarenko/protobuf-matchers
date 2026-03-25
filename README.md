@@ -2,7 +2,9 @@ GMock matchers for protocol buffers
 ===================================
 
 A library of matchers for protocol buffer message objects, for unit tests
-written using Google Test framework. E.g.
+written using Google Test framework. Requires at least C++17.
+
+E.g.
 
 ```c++
   #include "protobuf-matchers/protocol-buffer-matchers.h"
@@ -47,16 +49,14 @@ See also: https://bazel.build/rules/lib/globals/module
 
 Build and test
 ```sh
-bazel build --cxxopt=-std=c++17 //protobuf-matchers:protobuf-matchers-test
+bazel test //protobuf-matchers:protobuf-matchers-test
 ```
 
 # Build with CMake
 
-**WARNING**: CMake support is not actively maintained.
-
 Build and test
 ```sh
-cmake -S . -B build -G Ninja -D CMAKE_BUILD_TYPE=Debug
+cmake -S . -B build
 cmake --build build
-ctest --test-dir build --verbose
+cmake --build build --target test
 ```
