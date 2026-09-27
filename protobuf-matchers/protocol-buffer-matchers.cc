@@ -51,7 +51,8 @@ class StringErrorCollector : public google::protobuf::io::ErrorCollector {
     *error_text_ += stream.str();
   }
 
-  void RecordWarning(int line, int column, std::string_view message) override {
+  void RecordWarning(int line, int column,
+                     std::string_view message) override {
     std::ostringstream stream;
     stream << line << '(' << column << "): " << message << std::endl;
     *error_text_ += stream.str();

@@ -8,10 +8,10 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 
 set(PROTOBUF_MATCHERS_PROTOBUF_DEFAULT_FETCH_TAG
-  "v22.5"
+  "v34.1"
 )
 set(PROTOBUF_MATCHERS_GTEST_DEFAULT_FETCH_TAG
-  "release-1.12.1"
+  "v1.17.0"
 )
 
 # -----------------------------------------------------------------------------
